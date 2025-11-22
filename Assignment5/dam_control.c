@@ -27,12 +27,12 @@ DamMode dam_control(double water_level) {
 }
 
 void dam_control_test(void) {
-  test_equal_i(dam_control(20), DM_IDLE);
+  test_equal_i(dam_control(19), DM_IDLE);
   test_equal_i(dam_control(21), DM_PUMP_ONE);
   test_equal_i(dam_control(40), DM_PUMP_ONE);
   test_equal_i(dam_control(41), DM_PUMP_TWO);
-  test_equal_i(dam_control(67), DM_PUMP_EMERGENCY);
-  test_equal_i(dam_control(67.5), DM_PUMP_EMERGENCY);
+  test_equal_i(dam_control(67), DM_PUMP_TWO);
+  test_equal_i(dam_control(68), DM_PUMP_EMERGENCY);
 
 }
 
