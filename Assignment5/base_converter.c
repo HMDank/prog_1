@@ -107,7 +107,7 @@ void print_bits(int number) {
 
 void bit_operations() {
   printsln("Bitmagic");
-  // 4a) TODO
+  // both bits are 1 -> 1, else 0
   printsln("&");
   int a = 0xaf;
   int b = 0xa5;
@@ -116,7 +116,7 @@ void bit_operations() {
   print_bits(a);
   print_bits(b);
   print_bits(c);
-
+  // both bits are 0 -> 0, else 1
   printsln("|");
   a = 0xb1;
   b = 0x93;
@@ -126,6 +126,7 @@ void bit_operations() {
   print_bits(c);
 
   printsln("^");
+  // XOR (both bits are different -> 1, else 0)
   a = 0xb1;
   b = 0x33;
   c = a ^ b;
@@ -134,6 +135,7 @@ void bit_operations() {
   print_bits(c);
 
   printsln("<< und >>");
+  // shift the bits n times left or right
   a = 0x30;
   print_bits(a);
   a <<= 2;
@@ -143,10 +145,15 @@ void bit_operations() {
 }
 
 // 4c) TODO
-int set_bit(int value, int index, bool bit) { return value; }
+int set_bit(int value, int index, bool bit) {
+  if (((value >> index) & 1) != bit) {
+    value ^= (1 << index);
+  }
+  return value;
+}
 
 // 4b) TODO
-bool get_bit(int value, int index) { return false; }
+bool get_bit(int value, int index) { return ((value >> index) & 1) == 1; }
 
 /*
     Testfaelle fuer get_bit und set_bit
@@ -178,7 +185,10 @@ void test_get_set_bit() {
 }
 
 // 4d) TODO
-int extract_bits(int value, int start, int end) { return value; }
+int extract_bits(int value, int start, int end) {
+  int temp = (1 << (end - start + 1)) - 1;
+  return (value >> start) & temp;
+}
 
 /*
     Testfaelle fuer extract_bits.
@@ -192,7 +202,9 @@ void test_extract_bits() {
                "1011000000010");
   test_equal_s(convert_to_base(extract_bits(0xABCD, 16, 0), 2), "0");
   test_equal_s(convert_to_base(extract_bits(0xABCD, -1, 3), 2), "0");
-  test_equal_s(convert_to_base(extract_bits(0xABCD, 4, 34), 2), "0");
+  test_equal_s(
+      convert_to_base(extract_bits(0xABCD, 4, 34), 2),
+      "0"); // TODO: Ask about this weird test case. shoulve been 101010111100
 }
 
 int main(void) {
