@@ -144,7 +144,6 @@ void bit_operations() {
   print_bits(a);
 }
 
-// 4c) TODO
 int set_bit(int value, int index, bool bit) {
   if (((value >> index) & 1) != bit) {
     value ^= (1 << index);
@@ -152,7 +151,6 @@ int set_bit(int value, int index, bool bit) {
   return value;
 }
 
-// 4b) TODO
 bool get_bit(int value, int index) { return ((value >> index) & 1) == 1; }
 
 /*
@@ -184,7 +182,6 @@ void test_get_set_bit() {
   test_equal_i(a, 0x57);
 }
 
-// 4d) TODO
 int extract_bits(int value, int start, int end) {
   int temp = (1 << (end - start + 1)) - 1;
   return (value >> start) & temp;
