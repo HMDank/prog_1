@@ -91,7 +91,12 @@ void loops_f(int n) {
           printf("%s", "-");
       }
     } else { // columns inbetweens
-      printf("%c%*c", '/', (2 * n - 1), '/');
+      printf("%c", '/');
+      for (int count = 0; count < n - 1; count++) {
+        printf("%d ",
+               (count + (row - 1) * (n - 1)) % 10); // trial and error :DDD
+      }
+      printf("%c", '/');
     }
     printf("\n");
   }
