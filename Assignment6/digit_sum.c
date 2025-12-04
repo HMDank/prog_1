@@ -74,7 +74,7 @@ void digit_sum_test() {
   test_equal_i(digit_sum(10, false), 1);
   test_equal_i(digit_sum(333, false), 9);
   test_equal_i(digit_sum(123, false), 6);
-  test_equal_i(digit_sum(10, true), 1);
+  test_equal_i(digit_sum(10000, true), 1);
   test_equal_i(digit_sum(333, true), 3);
   test_equal_i(digit_sum(151, true), -3);
 
@@ -82,6 +82,7 @@ void digit_sum_test() {
   test_equal_i(divisible_by_eleven(12), false);
   test_equal_i(divisible_by_eleven(11), true);
   test_equal_i(divisible_by_eleven(121), true);
+  test_equal_b(divisible_by_eleven(61112326), true);
 }
 
 int main(void) {
