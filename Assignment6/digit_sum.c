@@ -19,6 +19,13 @@ unsigned get_int_length(unsigned number) { // O(log10(n))
   return count;
 }
 
+/**
+ * Calculates the (alternating) sum of the digits of a given integer.
+ *
+ * @param number The integer whose digits will be summed.
+ * @param alternating whether to calculate the sum or alternating sum
+ * @return The sum of the digits of the input integer.
+ */
 int digit_sum(unsigned number, bool alternating) {
   int sum = 0;
   unsigned temp = number;
@@ -45,11 +52,22 @@ int digit_sum(unsigned number, bool alternating) {
   }
   return sum;
 }
-
+/**
+ * checks whether the number is divisible by 11 or not
+ *
+ * @param number the number in question.
+ * @return whether it's divisible by 11 or not.
+ */
 bool divisible_by_eleven(unsigned number) {
-  // TODO
-  return false;
-}
+  int alternating_sum = digit_sum(number, true);
+  if (alternating_sum < 0)
+    alternating_sum = -alternating_sum;
+  if (alternating_sum == 0)
+    return true;
+  if (alternating_sum < 11)
+    return false;
+  return divisible_by_eleven(alternating_sum);
+} // TODO: Is this doable with DP?
 
 void digit_sum_test() {
   // TODO
@@ -63,6 +81,7 @@ void digit_sum_test() {
   // TODO
   test_equal_i(divisible_by_eleven(12), false);
   test_equal_i(divisible_by_eleven(11), true);
+  test_equal_i(divisible_by_eleven(121), true);
 }
 
 int main(void) {
