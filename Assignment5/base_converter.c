@@ -8,7 +8,7 @@
 
 String characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 /*
-    Rechnen, wie lang eine Zahl, "Zahl", ist in "base" basis.
+    Rechnet, wie lang eine Zahl, "Zahl", ist in "base" basis.
     @param number Zahl, die in der Zielbasis dargestellt wird.
     @param base Zielbasis, in der die Zahl number dargestellt werden soll.
     @return Die gerechnete Laenge.
@@ -133,7 +133,6 @@ void bit_operations() {
   print_bits(a);
   print_bits(b);
   print_bits(c);
-
   printsln("<< und >>");
   // shift the bits n times left or right
   a = 0x30;
@@ -151,7 +150,7 @@ int set_bit(int value, int index, bool bit) {
   return value;
 }
 
-bool get_bit(int value, int index) { return ((value >> index) & 1) == 1; }
+bool get_bit(int value, int index) { return ((value >> index) & 1); }
 
 /*
     Testfaelle fuer get_bit und set_bit
@@ -184,7 +183,6 @@ void test_get_set_bit() {
 
 int extract_bits(int value, int start, int end) {
   if (end > 16) {
-    return 0;
   }
   int temp = (1 << (end - start + 1)) - 1;
   return (value >> start) & temp;
@@ -202,19 +200,17 @@ void test_extract_bits() {
                "1011000000010");
   test_equal_s(convert_to_base(extract_bits(0xABCD, 16, 0), 2), "0");
   test_equal_s(convert_to_base(extract_bits(0xABCD, -1, 3), 2), "0");
-  test_equal_s(
-      convert_to_base(extract_bits(0xABCD, 4, 34), 2),
-      "0"); // TODO: Ask about this weird test case. shoulve been 101010111100
+  test_equal_s(convert_to_base(extract_bits(0xABCD, 4, 34), 2), "0");
 }
 
 int main(void) {
   test_convert_to_base();
-  /* Entfernen Sie Kommentierung der nachfolgenden Zeilen fuer Aufgabe 4
+  // Entfernen Sie Kommentierung der nachfolgenden Zeilen fuer Aufgabe 4
   printsln("------------------------------");
   bit_operations();
   printsln("------------------------------");
   test_get_set_bit();
   test_extract_bits();
-  */
+
   return 0;
 }
