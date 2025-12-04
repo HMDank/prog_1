@@ -164,10 +164,10 @@ int main(void) {
 	number males: 445
 	number females: 455
 	number diverse: 100
-	mean height males: 1.79 m
-	mean height females: 1.64 m
-	mean height diverse: 1.71 m
-	mean length of names: 11.88 characters
+	mean height males: 1.79
+	mean height females: 1.64
+	mean height diverse: 1.61
+	mean length of names: 13.20
 	*/
 	
 	return 0;
