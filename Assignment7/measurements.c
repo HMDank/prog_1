@@ -46,85 +46,72 @@ void print_statstics(statstics s) {
 
 statstics compute_statstics(String table) {
   statstics stats = make_statstics();
-  int total_length = s_length(table);
-  int current_char = 0;
-  int row_amount = -1;
-  int start;
-  char type;
-  int type_amount[3] = {0, 0, 0};
-  double sum_of_total_time_per_type[3] = {0.0, 0.0, 0.0};
-  double current_time;
-  double std = 0.0;
+  int table_len = s_length(table);
+  int pos = 0, num_rows = -1, field_start;
+  char input_type, c;
+  int count[3] = {0, 0, 0}; // count per type: {mouse, touch, keyboard}
+  double total_time[3] = {0.0, 0.0, 0.0}; // total time per type
+  double time_val, variance_sum = 0.0;
 
-  char ch;
+  // Skip header and count rows
+  while (s_get(table, pos) != '\n')
+    pos++;
+  pos++;
 
-  // move pointer to start of first line
-  while (s_get(table, current_char) != '\n')
-    current_char++;
-  current_char++;
+  for (int i = 0; i < table_len; i++)
+    if (s_get(table, i) == '\n')
+      num_rows++;
 
-  // count number of data rows
-  for (int row = 0; row < total_length; row++)
-    if (s_get(table, row) == '\n')
-      row_amount++;
+  // First pass: sum ages and times per type
+  for (int row = 1; row <= num_rows; row++) {
+    field_start = pos;
+    while ((c = s_get(table, pos)) != '\t' && c != '\0')
+      pos++;
+    stats.avg_age += d_of_s(s_sub(table, field_start, pos));
+    if (c == '\t')
+      pos++;
 
-  /* first pass: sum ages and times per type */
-  for (int row = 1; row <= row_amount; row++) {
-    start = current_char;
-    while ((ch = s_get(table, current_char)) != '\t' && ch != '\0')
-      current_char++;
-    stats.avg_age += i_of_s(s_sub(table, start, current_char));
-    if (ch == '\t')
-      current_char++;
+    input_type = s_get(table, pos++);
+    pos++; // skip tab
 
-    type = s_get(table, current_char);
-    current_char++;
-    // skip tab after type
-    current_char++;
+    field_start = pos;
+    while ((c = s_get(table, pos)) != '\n' && c != '\0')
+      pos++;
+    time_val = d_of_s(s_sub(table, field_start, pos));
 
-    start = current_char;
-    while ((ch = s_get(table, current_char)) != '\n' && ch != '\0')
-      current_char++;
-    current_time = d_of_s(s_sub(table, start, current_char));
+    int type_idx = (input_type == 'm') ? 0 : (input_type == 't') ? 1 : 2;
+    count[type_idx]++;
+    total_time[type_idx] += time_val;
 
-    if (type == 'm') {
-      type_amount[0]++;
-      sum_of_total_time_per_type[0] += current_time;
-    } else if (type == 't') {
-      type_amount[1]++;
-      sum_of_total_time_per_type[1] += current_time;
-    } else if (type == 'k') {
-      type_amount[2]++;
-      sum_of_total_time_per_type[2] += current_time;
-    }
-
-    if (ch == '\n')
-      current_char++;
+    if (c == '\n')
+      pos++;
   }
 
-  stats.avg_age /= row_amount;
-  stats.avg_mouse_time = sum_of_total_time_per_type[0] / type_amount[0];
-  stats.avg_touchscreen_time = sum_of_total_time_per_type[1] / type_amount[1];
-  stats.avg_keyboard_time = sum_of_total_time_per_type[2] / type_amount[2];
+  stats.avg_age /= num_rows;
+  stats.avg_mouse_time = total_time[0] / count[0];
+  stats.avg_touchscreen_time = total_time[1] / count[1];
+  stats.avg_keyboard_time = total_time[2] / count[2];
 
-  current_char = 0;
-  while (s_get(table, current_char) != '\n')
-    current_char++;
-  current_char++;
+  // Second pass: compute variance for age
+  pos = 0;
+  while (s_get(table, pos) != '\n')
+    pos++;
+  pos++;
 
-  for (int row = 1; row <= row_amount; row++) {
-    start = current_char;
-    while ((ch = s_get(table, current_char)) != '\t' && ch != '\0')
-      current_char++;
-    std += pow(d_of_s(s_sub(table, start, current_char)) - stats.avg_age, 2);
+  for (int row = 1; row <= num_rows; row++) {
+    field_start = pos;
+    while ((c = s_get(table, pos)) != '\t' && c != '\0')
+      pos++;
+    double age = d_of_s(s_sub(table, field_start, pos));
+    variance_sum += (age - stats.avg_age) * (age - stats.avg_age);
 
-    while ((ch = s_get(table, current_char)) != '\n' && ch != '\0')
-      current_char++;
-    if (ch == '\n')
-      current_char++;
+    while ((c = s_get(table, pos)) != '\n' && c != '\0')
+      pos++;
+    if (c == '\n')
+      pos++;
   }
 
-  stats.std_age = sqrt(std / (row_amount - 1));
+  stats.std_age = sqrt(variance_sum / (num_rows - 1));
   return stats;
 }
 
