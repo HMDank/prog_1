@@ -85,7 +85,7 @@ Statistics compute_statistics(String table) {
     start = current_char;
     while ((ch = s_get(table, current_char)) != '\n' && ch != '\0')
       current_char++;
-    current_time = i_of_s(s_sub(table, start, current_char));
+    current_time = d_of_s(s_sub(table, start, current_char));
 
     if (type == 'm') {
       type_amount[0]++;
@@ -116,7 +116,7 @@ Statistics compute_statistics(String table) {
     start = current_char;
     while ((ch = s_get(table, current_char)) != '\t' && ch != '\0')
       current_char++;
-    std += pow(i_of_s(s_sub(table, start, current_char)) - statis.avg_age, 2);
+    std += pow(d_of_s(s_sub(table, start, current_char)) - statis.avg_age, 2);
 
     while ((ch = s_get(table, current_char)) != '\n' && ch != '\0')
       current_char++;
