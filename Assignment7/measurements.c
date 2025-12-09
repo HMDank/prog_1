@@ -53,7 +53,7 @@ statstics compute_statstics(String table) {
   double total_time[3] = {0.0, 0.0, 0.0}; // total time per type
   double time_val, variance_sum = 0.0;
 
-  // Skip header and count rows
+  // skip header and count rows
   while (s_get(table, pos) != '\n')
     pos++;
   pos++;
@@ -62,7 +62,7 @@ statstics compute_statstics(String table) {
     if (s_get(table, i) == '\n')
       num_rows++;
 
-  // First pass: sum ages and times per type
+  // sum ages and times per type
   for (int row = 1; row <= num_rows; row++) {
     field_start = pos;
     while ((c = s_get(table, pos)) != '\t' && c != '\0')
@@ -92,7 +92,7 @@ statstics compute_statstics(String table) {
   stats.avg_touchscreen_time = total_time[1] / count[1];
   stats.avg_keyboard_time = total_time[2] / count[2];
 
-  // Second pass: compute variance for age
+  // compute std for age
   pos = 0;
   while (s_get(table, pos) != '\n')
     pos++;
@@ -103,7 +103,7 @@ statstics compute_statstics(String table) {
     while ((c = s_get(table, pos)) != '\t' && c != '\0')
       pos++;
     double age = d_of_s(s_sub(table, field_start, pos));
-    variance_sum += (age - stats.avg_age) * (age - stats.avg_age);
+    variance_sum += pow((age - stats.avg_age), 2);
 
     while ((c = s_get(table, pos)) != '\n' && c != '\0')
       pos++;
