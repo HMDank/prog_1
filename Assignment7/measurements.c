@@ -70,13 +70,11 @@ Statistics compute_statistics(String table) {
 
   /* first pass: sum ages and times per type */
   for (int row = 1; row <= row_amount; row++) {
-    int is_tab, is_newline;
     start = current_char;
     while ((ch = s_get(table, current_char)) != '\t' && ch != '\0')
       current_char++;
     statis.avg_age += i_of_s(s_sub(table, start, current_char));
-    is_tab = (ch == '\t');
-    if (is_tab)
+    if (ch == '\t')
       current_char++;
 
     type = s_get(table, current_char);
@@ -100,8 +98,7 @@ Statistics compute_statistics(String table) {
       sum_of_total_time_per_type[2] += current_time;
     }
 
-    is_newline = (ch == '\n');
-    if (is_newline)
+    if (ch == '\n')
       current_char++;
   }
 
@@ -116,7 +113,6 @@ Statistics compute_statistics(String table) {
   current_char++;
 
   for (int row = 1; row <= row_amount; row++) {
-    int is_newline;
     start = current_char;
     while ((ch = s_get(table, current_char)) != '\t' && ch != '\0')
       current_char++;
@@ -124,8 +120,7 @@ Statistics compute_statistics(String table) {
 
     while ((ch = s_get(table, current_char)) != '\n' && ch != '\0')
       current_char++;
-    is_newline = (ch == '\n');
-    if (is_newline)
+    if (ch == '\n')
       current_char++;
   }
 
