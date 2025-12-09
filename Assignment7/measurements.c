@@ -20,22 +20,22 @@ String s_sub(String s, int i, int j) {
   return a;
 }
 
-typedef struct statistics_s {
+typedef struct statstics_s {
   // todo
   double avg_age;
   double std_age;
   double avg_mouse_time;
   double avg_touchscreen_time;
   double avg_keyboard_time;
-} Statistics;
+} statstics;
 
-Statistics make_statistics() {
+statstics make_statstics() {
   // todo
-  Statistics stats = {0, 0.0, 0.0, 0.0, 0.0};
+  statstics stats = {0, 0.0, 0.0, 0.0, 0.0};
   return stats;
 }
 
-void print_statistics(Statistics s) {
+void print_statstics(statstics s) {
   // todo
   printf("Average Age: %f\n", s.avg_age);
   printf("Age Standard Deviation: %f\n", s.std_age);
@@ -44,8 +44,8 @@ void print_statistics(Statistics s) {
   printf("Average Keyboard Time: %f\n", s.avg_keyboard_time);
 }
 
-Statistics compute_statistics(String table) {
-  Statistics statis = make_statistics();
+statstics compute_statstics(String table) {
+  statstics stats = make_statstics();
   int total_length = s_length(table);
   int current_char = 0;
   int row_amount = -1;
@@ -73,7 +73,7 @@ Statistics compute_statistics(String table) {
     start = current_char;
     while ((ch = s_get(table, current_char)) != '\t' && ch != '\0')
       current_char++;
-    statis.avg_age += i_of_s(s_sub(table, start, current_char));
+    stats.avg_age += i_of_s(s_sub(table, start, current_char));
     if (ch == '\t')
       current_char++;
 
@@ -102,10 +102,10 @@ Statistics compute_statistics(String table) {
       current_char++;
   }
 
-  statis.avg_age /= row_amount;
-  statis.avg_mouse_time = sum_of_total_time_per_type[0] / type_amount[0];
-  statis.avg_touchscreen_time = sum_of_total_time_per_type[1] / type_amount[1];
-  statis.avg_keyboard_time = sum_of_total_time_per_type[2] / type_amount[2];
+  stats.avg_age /= row_amount;
+  stats.avg_mouse_time = sum_of_total_time_per_type[0] / type_amount[0];
+  stats.avg_touchscreen_time = sum_of_total_time_per_type[1] / type_amount[1];
+  stats.avg_keyboard_time = sum_of_total_time_per_type[2] / type_amount[2];
 
   current_char = 0;
   while (s_get(table, current_char) != '\n')
@@ -116,7 +116,7 @@ Statistics compute_statistics(String table) {
     start = current_char;
     while ((ch = s_get(table, current_char)) != '\t' && ch != '\0')
       current_char++;
-    std += pow(d_of_s(s_sub(table, start, current_char)) - statis.avg_age, 2);
+    std += pow(d_of_s(s_sub(table, start, current_char)) - stats.avg_age, 2);
 
     while ((ch = s_get(table, current_char)) != '\n' && ch != '\0')
       current_char++;
@@ -124,13 +124,13 @@ Statistics compute_statistics(String table) {
       current_char++;
   }
 
-  statis.std_age = sqrt(std / (row_amount - 1));
-  return statis;
+  stats.std_age = sqrt(std / (row_amount - 1));
+  return stats;
 }
 
 int main(void) {
   String table = s_read_file("measurements.txt");
-  Statistics statistics = compute_statistics(table);
-  print_statistics(statistics);
+  statstics statstics = compute_statstics(table);
+  print_statstics(statstics);
   return 0;
 }
