@@ -11,24 +11,105 @@ typedef struct better_array_s {
     int *array;
 } BetterArray;
 
-//todo: a)
 bool compare(int *array_a, int length_a, int *array_b, int length_b) {
-    return false;
+    if (length_a < 0 || length_b < 0) {
+        return false;
+    }
+    
+    if (length_a != length_b) {
+        return false;
+    }
+    
+    if (length_a == 0) {
+        return true;
+    }
+    
+    for (int i = 0; i < length_a; i++) {
+        if (array_a[i] != array_b[i]) {
+            return false;
+        }
+    }
+    
+    return true;
 }
 
-//todo: b)
 int remove_negatives(int* array, int length) {
-    return length;
+    int write_index = 0;
+    
+    for (int read_index = 0; read_index < length; read_index++) {
+        if (array[read_index] >= 0) {
+            array[write_index] = array[read_index];
+            write_index++;
+        }
+    }
+    
+    return write_index;
 }
 
-//todo: c)
 BetterArray intersect(int *array_a, int length_a, int* array_b, int length_b) {
-    return (BetterArray) {};
+    int max_size = (length_a < length_b) ? length_a : length_b;
+    
+    int *result = xcalloc(max_size, sizeof(int));
+    int result_length = 0;
+    
+    for (int i = 0; i < length_a; i++) {
+        bool found_in_b = false;
+        for (int j = 0; j < length_b; j++) {
+            if (array_a[i] == array_b[j]) {
+                found_in_b = true;
+                break;
+            }
+        }
+        
+        if (found_in_b) {
+            bool already_in_result = false;
+            for (int k = 0; k < result_length; k++) {
+                if (result[k] == array_a[i]) {
+                    already_in_result = true;
+                    break;
+                }
+            }
+            
+            if (!already_in_result) {
+                result[result_length] = array_a[i];
+                result_length++;
+            }
+        }
+    }
+    
+    return (BetterArray) {
+        .length = result_length,
+        .array = result
+    };
 }
 
-//todo: d)
 void merge_sorted_arrays(int *array_a, int length_a, int* array_b, int length_b, int* result, int length_result) {
-
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    
+    while (i < length_a && j < length_b) {
+        if (array_a[i] <= array_b[j]) {
+            result[k] = array_a[i];
+            i++;
+        } else {
+            result[k] = array_b[j];
+            j++;
+        }
+        k++;
+    }
+    
+    while (i < length_a) {
+        result[k] = array_a[i];
+        i++;
+        k++;
+    }
+    
+    while (j < length_b) {
+        result[k] = array_b[j];
+        j++;
+        k++;
+    }
 }
 
 void test_compare(){
@@ -73,7 +154,7 @@ void test_remove_negatives(){
 
     int a3[] = {-1, -2, -3, -4, -8, -9};
     int length_a3 = 6;
-    int a3_expected[] = {};
+    int a3_expected[1] = {0};
 
     int new_length = remove_negatives(a1, length_a1);
     test_equal_i(new_length, 5);
@@ -113,7 +194,7 @@ void test_intersect(){
     int a6[] = {2, -3, -19};
       int length_a6 = 3;
     
-    int a5_a6_intersected[] = {};
+    int a5_a6_intersected[1] = {0};
     
     BetterArray result = intersect(a1, length_a1, a2, length_a2);
     
@@ -162,7 +243,7 @@ void test_merge_sorted(){
     int a5[] = {1, 3, 17};
     int length_a5 = 3;
     
-    int a6[] = {};
+    int a6[1] = {0};
     int length_a6 = 0;
     
     int a5_a6_merged[] = {1, 3, 17};
@@ -188,3 +269,14 @@ int main(void) {
 
     return 0;
 }
+//e)
+/*Die Vorteile von BetterArray sind, dass sie die Länge mit dem Array statt das seperat einzugeben
+
+Strings werden in char-Arrays angegeben, und mit \0 beendet
+
+Die Länge eines Strings wird nicht gespeichert sondern mit dem \0 markiert. Man muss also die Zeichen bis \0 zählen
+wenn man die Länge möchte.
+
+Sowas ist nicht für int[] möglich weil jeder int Wert als Datenwert funktioniert und dementsprechend kein Ersatz für \0
+existiert. Deswegen muss man die Länge seperat speichern.
+*/

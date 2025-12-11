@@ -6,7 +6,11 @@ typedef struct draw_options_s {
 } DrawOptions;
 
 typedef struct rectangle_s {
-    // todo
+    int x;
+    int y;
+    int w;
+    int h;
+
 } Rectangle;
 
 /* Gibt ein DrawOptions Struct zurück, das dafür sorgt dass Rechtecke nur durch
@@ -37,15 +41,89 @@ DrawOptions make_draw_options_range(char from, char to) {
 }
 
 Rectangle make_rectangle(int x, int y, int w, int h) {
-    // todo
+    require("Die x Koordinate muss positiv sein", x >= 0);
+    require("Die y Koordiante muss positiv sein", y >= 0);
+    require("Die Breite muss positiv sein", w >= 0);
+    require("Die Hoehe muss positiv sein.", h >= 0);
+
+    return (Rectangle){
+        .x = x,
+        .y = y,
+        .w = w,
+        .h = h,
+    };
 }
 
 bool intersects(Rectangle a, Rectangle b) {
-    // todo
+    int a_right = a.x + a.w;
+    int a_bottom = a.y + a.h;
+    int b_right = b.x + b.w;
+    int b_bottom = b.y + b.h;
+
+    return !(a_right <= b.x || a.x >= b_right || a_bottom <= b.y || a.y >= b_bottom);
 }
 
 void print_rectangle(Rectangle rect, DrawOptions options) {
-    // todo
+
+    for (int i = 0; i < rect.y; i++) {
+        println("");
+    }
+    
+    if (options.has_border) {
+
+        for (int i = 0; i < rect.x; i++) {
+            prints(" ");
+        }
+        prints("+");
+        for (int i = 0; i < rect.w - 2; i++) {
+            prints("-");
+        }
+        printsln("+");
+
+        int fill_length = s_length(options.fill_pattern);
+        int fill_index = 0;
+        
+        for (int row = 0; row < rect.h - 2; row++) {
+
+            for (int i = 0; i < rect.x; i++) {
+                prints(" ");
+            }
+            prints("|");
+            
+
+            for (int col = 0; col < rect.w - 2; col++) {
+                char c = s_get(options.fill_pattern, fill_index % fill_length);
+                printc(c);
+                fill_index++;
+            }
+            
+            printsln("|");
+        }
+        
+        for (int i = 0; i < rect.x; i++) {
+            prints(" ");
+        }
+        prints("+");
+        for (int i = 0; i < rect.w - 2; i++) {
+            prints("-");
+        }
+        printsln("+");
+        
+    } else {
+
+        for (int row = 0; row < rect.h; row++) {
+
+            for (int i = 0; i < rect.x; i++) {
+                prints(" ");
+            }
+            
+            for (int col = 0; col < rect.w; col++) {
+                prints(options.fill_pattern);
+            }
+            
+            println("");
+        }
+    }
 }
 
 void test_intersects(void) {
