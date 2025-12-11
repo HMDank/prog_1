@@ -38,6 +38,7 @@ DrawOptions make_draw_options_fill(String fill) {
 
 DrawOptions make_draw_options_range(char from, char to) {
   // todo
+  return make_draw_options_flat();
 }
 
 Rectangle make_rectangle(int x, int y, int w, int h) {
