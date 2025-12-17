@@ -89,12 +89,12 @@ void print_board(Board *b) {
       printf("%d ", row);
 
       for (int column = 1; column <= b->cols; column++) {
-        char current_card = b->cards[b->rows + column];
+        char current_card = b->cards[(row - 1) * b->cols + (column - 1)];
         if (current_card < 0) {
           printf("# ");
         }
         if (current_card > 0) {
-          printf("%d ", current_card);
+          printf("%c ", current_card);
         }
       }
     }
@@ -114,19 +114,23 @@ int array_index(Board *b, int r, int c) {
 // Gets value at row r, column c. Stops the program if r or c are not valid.
 char get(Board *b, int r, int c) {
   // e) todo: implement
-  return '#';
+  return b->cards[array_index(b, r, c)];
 }
 
 // Sets value at row r, column c to x. Stops the program if r or c are not
 // valid.
 void set(Board *b, int r, int c, char x) {
   // e) todo: implement
+  b->cards[array_index(b, r, c)] = x;
 }
 
 // Turns over card in row r, column c. Stops the program if r or c are not
 // valid.
 void turn(Board *b, int r, int c) {
   // e) todo: implement
+  int index = array_index(b, r, c);
+  if (b->cards[index] != ' ')
+    b->cards[index] = -b->cards[index];
 }
 
 // Prints a prompt to wait and wait for return key.
@@ -157,6 +161,12 @@ bool read_coords(/*IN*/ Board *b, /*OUT*/ int *row, /*OUT*/ int *col) {
 // Restricts x to the interval [low, high].
 int clamp(int x, int low, int high) {
   // f) todo: implement
+  if (x < low) {
+    return low;
+  }
+  if (x > high) {
+    return high;
+  }
   return x;
 }
 
