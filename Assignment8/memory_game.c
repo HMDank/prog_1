@@ -106,7 +106,9 @@ void print_board(Board *b) {
 int array_index(Board *b, int r, int c) {
   // d) todo: implement
   // access to board elements: b->rows, b->cols
-  return 0;
+  if ((r > b->rows) || (c > b->cols) || (c < 0) || (r < 0))
+    exit(1);
+  return r * b->cols + c;
 }
 
 // Gets value at row r, column c. Stops the program if r or c are not valid.
