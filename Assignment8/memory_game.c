@@ -175,6 +175,12 @@ int clamp(int x, int low, int high) {
 // to the player. Otherwise, they are turned over again (backside up).
 // The input format is: 12<return> to open a card in row 0, column 1.
 void do_move(Board *b) { // g) todo: explain
+  // order: reads coordination (terminates if those aren't possible), turns
+  // cards over at those coordinates. If the cards are the same, replace them
+  // with " "s, else turn them back.
+  // The function *looks* robust enough, since I honestly couldn't find a
+  // counterexample that breaks it. It handles selecting selected cards,
+  // selecting spaces, selecting unavailable coords quite well.
   int r1, c1;
   while (!read_coords(b, &r1, &c1)) {
     printf("Illegal move.\n");
