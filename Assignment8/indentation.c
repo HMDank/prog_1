@@ -8,19 +8,43 @@ Compile & run: make indentation && ./indentation
 int indentation(char * s) {
     require_not_null(s);
     // todo
-    return -1;
+    int count = 0;
+    int i = 0;
+    while (s[i] != '\0') {
+        if (s[i] == ' ') {
+            count++;
+            i++;
+        } else if (s[i] == '\t') {
+            return -1;
+        } else {
+            break;
+        }
+    }
+    return count;
 }
 
 char * left_trim(char * s) {
     require_not_null(s);
     // todo
-    return s;
+    int indent = indentation(s);
+    if (indent == -1) {
+        return "";
+    }
+    return s + indent;
 }
 
 char * extract_comment(char * s) {
     require_not_null(s);
     // todo
-    return s;
+    char * p = s;
+    while (*p != '\0') {
+        if (*p == '/' && *(p + 1) == '/') {
+            p += 2;
+            return left_trim(p);
+        }
+        p++;
+    }
+    return "";
 }
 
 void indentation_test(void) {

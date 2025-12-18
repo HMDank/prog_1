@@ -74,40 +74,93 @@ void delete_car_park(Car* cars){
 
 // (a) TODO: implement compare function
 int compare(Car car1, Car car2){
+	if (car1.year < car2.year) {
+		return 1;
+	}
+	if (car1.year > car2.year) {
+		return -1;
+	}
+	int brand_cmp = strcmp(car1.brand, car2.brand);
+	if (brand_cmp < 0) {
+		return -1;
+	}
+	if (brand_cmp > 0) {
+		return 1;
+	}
 	return 0;
 }
 
 // (b) TODO: write compare test function
 void compare_test(void){
-
+	Car car1 = {"VW", 2015, 50000, 15000.0};
+	Car car2 = {"BMW", 2010, 80000, 12000.0};
+	test_equal_i(compare(car1, car2), -1);
+	
+	Car car3 = {"Ford", 2005, 100000, 8000.0};
+	Car car4 = {"Audi", 2012, 60000, 14000.0};
+	test_equal_i(compare(car3, car4), 1);
+	
+	Car car5 = {"Audi", 2015, 40000, 18000.0};
+	Car car6 = {"BMW", 2015, 45000, 19000.0};
+	test_equal_i(compare(car5, car6), -1);
+	
+	Car car7 = {"VW", 2010, 70000, 11000.0};
+	Car car8 = {"Ford", 2010, 75000, 10000.0};
+	test_equal_i(compare(car7, car8), 1);
+	
+	Car car9 = {"Mercedes", 2016, 30000, 22000.0};
+	Car car10 = {"Mercedes", 2016, 35000, 21000.0};
+	test_equal_i(compare(car9, car10), 0);
 }
 
 // (c) TODO: implement sorted function
 bool sorted(Car* a, int length){
-	return false;
+	for (int i = 0; i < length - 1; i++) {
+		if (compare(a[i], a[i + 1]) > 0) {
+			return false;
+		}
+	}
+	return true;
 }
 
 // (d,e) TODO: implement random_sort function
 int random_sort(Car* a, int length){
-	return 0;
+	int swaps = 0;
+	while (!sorted(a, length)) {
+		int i = i_rnd(length);
+		int j = i_rnd(length);
+		Car temp = a[i];
+		a[i] = a[j];
+		a[j] = temp;
+		swaps++;
+	}
+	
+	/* Ja, man kann die Anzahl der compare() Aufrufe bestimmen.
+	   Die Funktion sorted() ruft die Funkjtion compare() so oft wie der Wert in (length-1) hoch oder niedrig ist.
+	   Also anders gesagt: Anzahl compares ist equivalent zu swaps * (length-1)  
+	*/
+	
+	return swaps;
 }
 
 
 int main(void) {
 	
 	// (b) TODO: test compare function
-	
-	
+	compare_test();
+	printf("Tests passed\n\n");
 	
 	//some output
 	int number_of_random_cars = 10;
 	Car* car_park = create_car_park(number_of_random_cars);
 	print_car_array(car_park, number_of_random_cars);
 	
-	printf("Sorting...\n");
+	printf("\nSorting...\n");
 	
 	//TODO: sort the car_park array.
-	
+	int swaps = random_sort(car_park, number_of_random_cars);
+	printf("Done! Swaps: %d\n", swaps);
+	printf("Compares: about %d\n\n", (number_of_random_cars - 1) * swaps);
 	
 	print_car_array(car_park, number_of_random_cars);
 	
