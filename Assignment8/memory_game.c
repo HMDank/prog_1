@@ -60,7 +60,7 @@ void init_cards(Board *b) {
     b->cards[index] = ' ';
   }
 
-  shuffle(b->cards, b->ncards);
+  shuffle(b->cards, b->rows * b->cols);
 }
 
 // Prints the board. Hidden cards are shown as '#'. The following shows an
