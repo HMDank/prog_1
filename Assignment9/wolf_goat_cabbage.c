@@ -140,6 +140,16 @@ int length_list(Node *list);
 // Example calls for length_list (below).
 void length_list_test(void) {
   // TODO: 3c)
+  Node *list = NULL;
+  list = new_node("first", new_node("second", new_node("third", NULL)));
+  test_equal_i(length_list(list), 3);
+  free_list(list);
+  list = new_node("first", new_node("second", NULL));
+  test_equal_i(length_list(list), 2);
+  free_list(list);
+  list = new_node("first", NULL);
+  test_equal_i(length_list(list), 1);
+  free_list(list);
 }
 
 // Number of elements of the list.
@@ -155,11 +165,25 @@ int index_list(Node *list, String s);
 // Example calls for index_list (below).
 void index_list_test(void) {
   // TODO: 3d)
+  Node *list = NULL;
+  list = new_node("first", new_node("second", new_node("third", NULL)));
+  test_equal_i(index_list(list, "first"), 0);
+  test_equal_i(index_list(list, "second"), 1);
+  test_equal_i(index_list(list, "third"), 2);
+  free_list(list);
 }
 
 // Return index of s in list, or -1 if s is not in list.
 int index_list(Node *list, String s) {
   // TODO: 3d)
+  int index = 0;
+  while (list != NULL && list->value != NULL) {
+    if (s_equals(list->value, s)) {
+      return index;
+    }
+    index++;
+    list = list->next;
+  }
   return -1;
 }
 
@@ -171,12 +195,57 @@ Node *remove_list(Node *list, int index);
 // Example calls for remove_list (below).
 void remove_list_test(void) {
   // TODO: 3e)
+
+  Node *list1 = new_node("first", new_node("second", new_node("third", NULL)));
+  Node *expected1 = new_node("second", new_node("third", NULL));
+  Node *result1 = remove_list(list1, 0);
+  test_equal_lists(__LINE__, result1, expected1);
+  free_list(result1);
+  free_list(expected1);
+
+  Node *list2 = new_node("first", new_node("second", new_node("third", NULL)));
+  Node *expected2 = new_node("first", new_node("third", NULL));
+  Node *result2 = remove_list(list2, 1);
+  test_equal_lists(__LINE__, result2, expected2);
+  free_list(result2);
+  free_list(expected2);
+
+  Node *list3 = new_node("first", new_node("second", new_node("third", NULL)));
+  Node *expected3 = new_node("first", new_node("second", NULL));
+  Node *result3 = remove_list(list3, 2);
+  test_equal_lists(__LINE__, result3, expected3);
+  free_list(result3);
+  free_list(expected3);
 }
 
 // Remove element at position index from list. The element at index has to be
 // deleted.
 Node *remove_list(Node *list, int index) {
-  // TODO: 3e)
+  int original_length = length_list(list);
+  if (list == NULL || index < 0 || index >= original_length) {
+    printf("Warning: List might be NULL or index might be out of range");
+    exit(1);
+  }
+
+  Node *adios = NULL;
+  if (index == 0) { // remove first node
+    adios = list;
+    list = list->next;
+    free(adios->value);
+    free(adios);
+
+  } else {
+    Node *prev = list;
+    for (int i = 0; i < index - 1; i++) {
+      prev = prev->next; // run straight to position index - 1
+    }
+    adios = prev->next;
+    prev->next = adios->next;
+    free(adios->value);
+    free(adios);
+  }
+
+  ensure_code(length_list(list) == original_length - 1);
   return list;
 }
 
