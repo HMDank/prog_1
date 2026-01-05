@@ -45,6 +45,13 @@ void println_list(Node *list) {
 void free_list(Node *list) {
   // TODO: 3a)
   // (there will be memory leaks if this function is not yet implemented)
+  while (list != NULL) {
+    Node *next = list->next;
+    free(list->value); // free this first cuz else "base_free: trying to free
+                       // unknown pointer"
+    free(list);
+    list = next;
+  }
 }
 
 bool test_equal_lists(int line, Node *list1, Node *list2);
@@ -104,7 +111,28 @@ void test_equal_lists_test(void) {
 // Checking whether two string lists are equal.
 bool test_equal_lists(int line, Node *list1, Node *list2) {
   // TODO: 3b)
-  return false;
+  int pos = 0;
+  while (list1 != NULL && list2 != NULL) {
+    if (!s_equals(list1->value, list2->value)) {
+      printf("Line %d: The values at node %d differ: %s <-> %s.\n", line, pos,
+             list1->value, list2->value);
+      return false;
+    }
+    list1 = list1->next;
+    list2 = list2->next;
+    pos++;
+  }
+
+  if (list1 == NULL && list2 == NULL) {
+    printf("Line %d: The lists are equal.\n", line);
+    return true;
+  } else if (list1 == NULL) {
+    printf("Line %d: list1 is shorter than list2.\n", line);
+    return false;
+  } else {
+    printf("Line %d: list1 is longer than list2.\n", line);
+    return false;
+  }
 }
 
 int length_list(Node *list);
@@ -210,7 +238,7 @@ void play_puzzle(Puzzle *p) {
 ///////////////////////////////////////////////////////////////////////////
 
 int main(void) {
-  report_memory_leaks(true); // TODO: 2c)
+  report_memory_leaks(true); // TODO: 4c)
 
   test_equal_lists_test();
   length_list_test();
