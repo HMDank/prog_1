@@ -295,13 +295,127 @@ void finish_puzzle(Puzzle *p) {
   exit(0);
 }
 
+void check_danger(Node *side, Puzzle *p) {
+  if (contains_list(side, "Ziege") && contains_list(side, "Kohl") &&
+      !contains_list(side, "Wolf")) {
+    printsln("Die Ziege hat den Kohl gefressen.");
+    finish_puzzle(p);
+  }
+  if (contains_list(side, "Wolf") && contains_list(side, "Ziege") &&
+      !contains_list(side, "Kohl")) {
+    printsln("Der Wolf hat die Ziege gefressen.");
+    finish_puzzle(p);
+  }
+}
+
 void evaluate_puzzle(Puzzle *p) {
-  // TODO: 4a)
+  if (p->left == NULL && contains_list(p->right, "Wolf") &&
+      contains_list(p->right, "Ziege") && contains_list(p->right, "Kohl")) {
+    printsln("Congrats! Du hast gewonnen.");
+    finish_puzzle(p);
+  }
+
+  if (p->position == LEFT) {
+    check_danger(p->right, p);
+  } else {
+    check_danger(p->left, p);
+  }
+}
+
+void move_boat(Puzzle *p) {
+  if (p->position == LEFT) {
+    p->position = RIGHT;
+  } else {
+    p->position = LEFT;
+  }
 }
 
 void play_puzzle(Puzzle *p) {
   print_puzzle(p);
+
   // TODO: 4b)
+  // Note: ALWAYS FREE BEFORE EVALUATING THE PUZZLE
+  printf("Welcome! Gib 'go' ein, um das Boot nach links bzw. "
+         "rechts zu schieben. Gib einen Tier ein, um den abzuholen oder "
+         "einzusetzen. Gib 'q' ein, um das Spiel zu brechen.\n");
+  while (true) {
+    print_puzzle(p);
+    printf("> ");
+    String input = s_input(32);
+
+    if (s_equals(input, "q")) {
+      free(input);
+      finish_puzzle(p);
+    }
+
+    if (s_equals(input, "go")) {
+      move_boat(p);
+      free(input);
+      evaluate_puzzle(p);
+      continue;
+    }
+
+    if (s_equals(input, "Wolf") || s_equals(input, "Ziege") ||
+        s_equals(input, "Kohl")) {
+
+      // placing the animal
+      if (p->boat != NULL && s_equals(p->boat->value, input)) {
+        Node *animal = p->boat;
+        p->boat = NULL;
+        if (p->position == LEFT) {
+          animal->next = p->left;
+          p->left = animal;
+        } else {
+          animal->next = p->right;
+          p->right = animal;
+        }
+        free(input);
+        evaluate_puzzle(p);
+        continue;
+      }
+
+      // If the boat is empty, try to pick up the animal from the current bank
+      if (p->boat == NULL) {
+        if (p->position == LEFT) {
+          if (contains_list(p->left, input)) {
+            int index = index_list(p->left, input);
+            p->left = remove_list(p->left, index); // removes and frees old node
+            p->boat = new_node(input, NULL);
+            free(input);
+            evaluate_puzzle(p);
+            continue;
+          } else {
+            printsln("Nicht auf dieser Seite.");
+            free(input);
+            continue;
+          }
+        } else {
+          if (contains_list(p->right, input)) {
+            int idx = index_list(p->right, input);
+            p->right = remove_list(p->right, idx);
+            p->boat = new_node(input, NULL);
+            free(input);
+            evaluate_puzzle(p);
+            continue;
+          } else {
+            printsln("Nicht auf dieser Seite.");
+            free(input);
+            continue;
+          }
+        }
+      }
+
+      printsln("Das Boot ist besetzt.");
+      free(input);
+      continue;
+    }
+
+    printsln("Unbekannter Befehl. \n"
+             "Gib 'go' ein, um das Boot nach links bzw. "
+             "rechts zu schieben. Gib einen Tier ein, um den abzuholen oder "
+             "einzusetzen. Gib 'q' ein, um das Spiel zu brechen.");
+    free(input);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -309,12 +423,12 @@ void play_puzzle(Puzzle *p) {
 int main(void) {
   report_memory_leaks(true); // TODO: 4c)
 
-  test_equal_lists_test();
-  length_list_test();
-  index_list_test();
-  remove_list_test();
+  // test_equal_lists_test();
+  // length_list_test();
+  // index_list_test();
+  // remove_list_test();
 
-  // Puzzle p = make_puzzle();
-  // play_puzzle(&p);
+  Puzzle p = make_puzzle();
+  play_puzzle(&p);
   return 0;
 }
