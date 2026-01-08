@@ -21,7 +21,14 @@ Creates a zero-initialized matrix of rows and columns matrix.
 */
 Matrix* make_matrix(int n_rows, int n_cols) {
     // TODO: a)
-    return NULL;
+    Matrix* m = xmalloc(sizeof(Matrix)); /*Wir erstellen einen Pointer für Matrix namens m der auf die Matrix Daten zeigt die in xmalloc(sizeof(Matrix)) liegen. */
+    m->rows = n_rows;
+    m->cols = n_cols;
+    m->data = xmalloc(n_rows * sizeof(double*));
+    for (int i = 0 ; i < n_rows ; i++) {
+        m->data[i] = xcalloc(n_cols, sizeof(double));
+    }
+    return m;
 }
 
 /**
@@ -32,8 +39,15 @@ Creates a zero-initialized matrix of rows and columns matrix.
 @return a pointer to an array of n_rows pointers to rows; a row is an array of n_cols doubles 
 */
 Matrix* copy_matrix(double* data, int n_rows, int n_cols) {
-    // TODO: b)
-    return NULL;
+    Matrix* m = make_matrix (n_rows, n_cols);
+    for (int i = 0 ; i < n_rows ; i++) {
+        for (int j = 0 ; j < n_cols ; j++) {
+
+            m->data[i][j] = data[i * n_cols + j];
+        }
+    }
+
+    return m;
 }
 
 /**
@@ -42,6 +56,12 @@ Print a matrix.
 */
 void print_matrix(Matrix* m) {
     // TODO: c)
+    for (int i = 0 ; i < m->rows ; i++) {
+        for (int j = 0 ; j < m->cols ; j++) {
+            printf("%7.2" , m->data[i][j]);
+        }
+    }
+    
 }
 
 /**
@@ -52,6 +72,15 @@ Add two matrices.
 */
 Matrix* add_matrices(/*in*/ Matrix* a, /*in*/ Matrix* b) {
     // TODO: d)
+    if (a->rows != b->rows || a->cols != b->cols) {
+        return NULL;
+        Matrix* result = make_matrix(a->rows, a->cols);
+        for (int i=0; i < a->rows; i++) {
+            for (int j=0; j < a->cols; j++) {
+                result->data[i][j] = a->data[i][j] + b->data[i][j];
+            }
+        }
+    }
     return NULL;
 }
 
@@ -61,6 +90,12 @@ Free a matrix.
 */
 void free_matrix(Matrix* m) {
     // TODO: e)
+    void free_matrix(Matrix* m) {
+    for (int i = 0 ; i < m->rows ; i++) {
+        free(m->data[i]);
+    }
+    free(m->data);
+    free(m);
 }
 
 void matrix_test(void) {
