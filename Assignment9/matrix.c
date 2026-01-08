@@ -56,14 +56,18 @@ Print a matrix.
 */
 void print_matrix(Matrix* m) {
     // TODO: c)
+    if (m == NULL) {
+        printf("(null matrix)\n");
+        return;
+    }
     for (int i = 0 ; i < m->rows ; i++) {
         for (int j = 0 ; j < m->cols ; j++) {
-            printf("%7.2" , m->data[i][j]);
+            printf("%7.2f", m->data[i][j]);
         }
+        printf("\n");
     }
-    
-}
 
+}
 /**
 Add two matrices.
 @param[in] a the first operand
@@ -74,14 +78,15 @@ Matrix* add_matrices(/*in*/ Matrix* a, /*in*/ Matrix* b) {
     // TODO: d)
     if (a->rows != b->rows || a->cols != b->cols) {
         return NULL;
+    } else { 
         Matrix* result = make_matrix(a->rows, a->cols);
         for (int i=0; i < a->rows; i++) {
             for (int j=0; j < a->cols; j++) {
                 result->data[i][j] = a->data[i][j] + b->data[i][j];
             }
         }
+        return result;
     }
-    return NULL;
 }
 
 /**
@@ -90,7 +95,8 @@ Free a matrix.
 */
 void free_matrix(Matrix* m) {
     // TODO: e)
-    void free_matrix(Matrix* m) {
+    if (m == NULL) return;
+
     for (int i = 0 ; i < m->rows ; i++) {
         free(m->data[i]);
     }
