@@ -92,7 +92,15 @@ TreeNode *new_tree_node(Element *element) {
 /*  TODO: g)
     Releases the memory used by a tree_node and also frees the included element.
 */
-void free_tree_node(TreeNode *tree) {}
+void free_tree_node(TreeNode *tree) {
+  if (tree == NULL) {
+    return;
+  }
+  free_tree_node(tree->left);
+  free_tree_node(tree->right);
+  free_element(tree->element);
+  free(tree);
+}
 
 // TODO: b)
 struct Element {
@@ -111,9 +119,35 @@ Element *new_element(char *wish, char *child) {
 }
 
 // TODO: g)
-void free_element(Element *element) {}
+void free_element(Element *element) {
+  if (element == NULL) {
+    return;
+  }
+  free(element->text);
+  while (element->wishers != NULL) {
+    element->wishers = free_node(element->wishers);
+  }
+  free(element);
+}
 // TODO: c)
-TreeNode *add_wish(TreeNode *tree, char *wish, char *child) { return tree; }
+TreeNode *add_wish(TreeNode *tree, char *wish, char *child) {
+  if (tree == NULL) { // else would lead to seg_fault
+    return new_tree_node(new_element(wish, child));
+  }
+
+  if (strcmp(wish, tree->element->text) == 0) {
+    if (!contains(tree->element->wishers, child)) {
+      tree->element->wishers = new_node(child, tree->element->wishers);
+    }
+    tree->element->frequency++;
+  } else if (strcmp(wish, tree->element->text) < 0) {
+    tree->left = add_wish(tree->left, wish, child);
+  } else {
+    tree->right = add_wish(tree->right, wish, child);
+  }
+
+  return tree;
+}
 
 typedef struct ElementNode {
   struct ElementNode *next;
@@ -127,12 +161,18 @@ ElementNode *new_element_node(Element *element, ElementNode *next) {
   return en;
 }
 // TODO: g)
-void free_element_list(ElementNode *en) {}
+void free_element_list(ElementNode *en) {
+  while (en != NULL) {
+    ElementNode *next = en->next;
+    free(en);
+    en = next;
+  }
+}
 
 void print_element_list(ElementNode *list, int n) {
   printf("%55s\t%6s\n", "Wunsch", "Anzahl");
   while (n > 0 && list != NULL) {
-    // printf("%55s\t%6d\n", list->element->wish, list->element->count);
+    printf("%55s\t%6d\n", list->element->text, list->element->frequency);
     n--;
     list = list->next;
   }
@@ -140,11 +180,53 @@ void print_element_list(ElementNode *list, int n) {
 
 // TODO: e)
 ElementNode *insert_ordered_by_count(ElementNode *result, TreeNode *tree) {
-  return NULL;
+  if (tree == NULL) {
+    return result;
+  }
+
+  result = insert_ordered_by_count(result, tree->left);
+  result = insert_ordered_by_count(result, tree->right);
+
+  if (result == NULL || tree->element->frequency > result->element->frequency) {
+    return new_element_node(tree->element, result);
+  }
+
+  ElementNode *current = result;
+  while (current->next != NULL &&
+         current->next->element->frequency >= tree->element->frequency) {
+    current = current->next;
+  }
+
+  current->next = new_element_node(tree->element, current->next);
+
+  return result;
 }
 
 // TODO: d)
-void print_tree_as_list(TreeNode *tree) {}
+static void print_actual_tree(TreeNode *tree) {
+  if (tree == NULL)
+    return;
+  print_actual_tree(tree->left);
+  printf("%55s\t%6d\t", tree->element->text, tree->element->frequency);
+
+  // Print children on the same line
+  Node *wishers = tree->element->wishers;
+  while (wishers != NULL) {
+    printf("%s", wishers->value);
+    if (wishers->next != NULL) {
+      printf(", ");
+    }
+    wishers = wishers->next;
+  }
+  printf("\n");
+
+  print_actual_tree(tree->right);
+}
+
+void print_tree_as_list(TreeNode *tree) {
+  printf("%55s\t%6s\t%s\n", "Wunsch", "Anzahl", "Kinder");
+  print_actual_tree(tree);
+}
 
 // Skips the rest of the current line.
 char *skip_line(char *s) {
@@ -235,11 +317,43 @@ int main(int argc, char **argv) {
 
   ElementNode *sorted_by_count = insert_ordered_by_count(NULL, tree);
 
-  // print_element_list(sorted_by_count, 10);
+  //   print_element_list(sorted_by_count, 10);
 
   // TODO: f)
+  Node *all_children = NULL;
+  int gift_count = 0;
+  ElementNode *current = sorted_by_count;
+
+  while (current != NULL && gift_count < 11) {
+    // Add all children from this gift
+    Node *wishers = current->element->wishers;
+    while (wishers != NULL) {
+      if (!contains(all_children, wishers->value)) {
+        all_children = new_node(wishers->value, all_children);
+      }
+      wishers = wishers->next;
+    }
+    gift_count++;
+    current = current->next;
+  }
+
+  int unique_children = length(all_children);
+  printf("With top 11 gifts, %d children get presents.\n", unique_children);
+
+  if (unique_children >= 29) {
+    printf("All children got the gifts!\n");
+  } else {
+    printf("Only %d out of 29 children get gifts.\n", unique_children);
+  }
+
+  // Free children list
+  while (all_children != NULL) {
+    all_children = free_node(all_children);
+  }
 
   // TODO: g)
+  free_element_list(sorted_by_count);
+  free_tree_node(tree);
 
   return 0;
 }
