@@ -125,7 +125,19 @@ void print_node(Node *node, char *prefix) {
 
 // Recursively frees the node.
 void free_node(Node *node) {
-  // TODO: implement (c)
+  if (node->type == NT_DIR) {
+    Entry *entry = node->dir.entries;
+    while (entry != NULL) {
+      Entry *next = entry->next;
+      free_node(entry->node);
+      free(entry);
+      entry = next;
+    }
+  } else if (node->type == NT_FILE) {
+    if (node->file.contents != NULL) {
+      free(node->file.contents);
+    }
+  }
   free(node);
 }
 
