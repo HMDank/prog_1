@@ -176,18 +176,21 @@ Node *find_node(Node *root, char *path) {
   require_not_null(path);
   // skip slashes at front
   while (*path == '/')
-    path++;
+    path++; // didn't know this was a thing wow
   // if empty, return root
   if (*path == '\0')
     return root;
   // find path separator
   char *slash = strchr(path, '/');
   if (slash == NULL) {
-    // TODO: implement (d)
-    return NULL;
+    return find_entry(root, path);
   } else {
     // TODO: implement (d)
-    return NULL;
+    Node *next_dir = find_entry_n(root, path, slash - path);
+    if (next_dir == NULL || next_dir->type != NT_DIR) {
+      return NULL;
+    }
+    return find_node(next_dir, slash);
   }
 }
 
