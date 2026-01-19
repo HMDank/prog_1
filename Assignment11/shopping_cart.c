@@ -38,7 +38,7 @@ Item* new_item(String name, Category cat, int price) {
 // Item* -> Item*
 // Create a copy of an Item.
 void* copy_item(void* x) {
-    // TODO: a)
+    
     return NULL;
 }
 
@@ -75,7 +75,8 @@ void free_item(void* x) {
 // Item* -> bool
 // Returns true if the item is an electronic device.
 bool is_electronics(void* element, int i, void* x) {
-    // TODO: b)
+    Item *item = (Item *)element;
+    if(item->cat == C_ELECTRONICS) return true;
     return false;
 }
 
