@@ -23,35 +23,35 @@ Node *take_list(Node *list, int n) {
   }
   if (n == 0)
     return NULL;
-  Node *new_list = new_node(list->value, take_list(list->next, n - 1));
-  return new_list;
+
+  return new_node(list->value, take_list(list->next, n - 1));
+  ;
 }
 
 // Create a list consisting of nodes of list, except the first n.
 Node *drop_list(Node *list, int n) {
   // TODO: b)
-  while (n > 0) {
-    list = list->next;
-    n--;
+  if (list == NULL) {
+    return NULL;
   }
-  return list;
+  if (n == 0)
+    return new_node(list->value, drop_list(list->next, 0));
+  return drop_list(list->next, n - 1);
 }
 
-// Take alternatingly from list1 and list2 until all data is collected in the
-// result.
+// Take alternatingly from list1 and list2 until all data (this means the rest
+// of the longer list, right?) is collected in the result.
 Node *interleave(Node *list1, Node *list2) {
   // TODO: c)
-  Node *new_list = new_node(NULL, NULL);
-  bool flag = true;
-  while (list1 != NULL || list2 != NULL) {
-    if (flag) {
-      new_list->value = list1;
-      list1 = list1->next;
-    } else {
-      new_list->value = list1
-    }
-  }
-  return NULL;
+  if (list1 == NULL && list2 == NULL)
+    return NULL;
+  if (list1 == NULL)
+    return new_node(list2->value, interleave(NULL, list2->next));
+  if (list2 == NULL)
+    return new_node(list1->value, interleave(list1->next, NULL));
+
+  return new_node(list1->value,
+                  new_node(list2->value, interleave(list1->next, list2->next)));
 }
 
 // typedef bool (*EqualFun)(void* element1, void* element2);
