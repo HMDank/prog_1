@@ -30,13 +30,27 @@ Node *take_list(Node *list, int n) {
 // Create a list consisting of nodes of list, except the first n.
 Node *drop_list(Node *list, int n) {
   // TODO: b)
-  return NULL;
+  while (n > 0) {
+    list = list->next;
+    n--;
+  }
+  return list;
 }
 
 // Take alternatingly from list1 and list2 until all data is collected in the
 // result.
 Node *interleave(Node *list1, Node *list2) {
   // TODO: c)
+  Node *new_list = new_node(NULL, NULL);
+  bool flag = true;
+  while (list1 != NULL || list2 != NULL) {
+    if (flag) {
+      new_list->value = list1;
+      list1 = list1->next;
+    } else {
+      new_list->value = list1
+    }
+  }
   return NULL;
 }
 
