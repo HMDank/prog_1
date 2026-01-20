@@ -17,15 +17,17 @@ void free_string(void *x) { free(x); }
 // Create a list consisting of the first n nodes of list.
 Node *take_list(Node *list, int n) {
   // TODO: a)
-  if (list == NULL || n > length_list(list)) {
-    printf("Invalid. List is Null or n > length of list");
+  if (n > length_list(list)) {
+    printf("Invalid n. n is > length of the list");
     exit(1);
+  }
+  if (list == NULL) {
+    return NULL;
   }
   if (n == 0)
     return NULL;
 
   return new_node(list->value, take_list(list->next, n - 1));
-  ;
 }
 
 // Create a list consisting of nodes of list, except the first n.
@@ -62,12 +64,38 @@ bool group_by_length(void *element1, void *element2) {
   return s_length(s1) == s_length(s2);
 }
 
+Node *append(Node *list, void *value) {
+  if (list == NULL) {
+    return new_node(value, NULL);
+  }
+  Node *current = list;
+  while (current->next != NULL) {
+    current = current->next;
+  }
+  current->next = new_node(value, NULL);
+  return list;
+}
 // Group elements in list. Equivalent elements (for which equivalent is true)
 // are put in the same group. The result is a list of groups. Each group is
 // itself a list. Each group contains items that are equivalent.
 Node *group_list(Node *list, EqualFun equivalent) {
   // TODO: d)
-  return NULL;
+  if (list == NULL)
+    return NULL;
+  Node *current_group = new_node(list->value, NULL);
+  Node *remaining = NULL;
+  Node *list_copy = list->next;
+  while (list_copy != NULL) {
+    if (equivalent(list_copy->value, list->value))
+      current_group = append(current_group, list_copy->value);
+    else
+      remaining = append(remaining, list_copy->value);
+    list_copy = list_copy->next;
+  }
+
+  Node *rest = group_list(remaining, equivalent);
+  free_list(remaining, NULL); // has to be freed else leaks
+  return new_node(current_group, rest);
 }
 
 void free_group(void *x) {
