@@ -38,7 +38,9 @@ Item* new_item(String name, Category cat, int price) {
 // Item* -> Item*
 // Create a copy of an Item.
 void* copy_item(void* x) {
-    
+    Item* item2 = (Item *) x;
+    if (item2 != NULL) {return new_item(item2->name, item2->cat, item2->price);
+    }
     return NULL;
 }
 
@@ -69,7 +71,9 @@ String item_to_string(void* x) {
 // Item* -> void
 // Releases memory of an Item.
 void free_item(void* x) {
-    // TODO: a)
+    Item* item = (Item *) x; //hier wird void auf Item* gerichtet und x bekommt 
+    free(item->name); //Ich habe das auch gefreed weil in base.c in Zeile 204 speicher für den namen extra allokiert wird. (mit der s_copy funktion)
+    free(item);
 }
 
 // Item* -> bool
@@ -84,16 +88,15 @@ bool is_electronics(void* element, int i, void* x) {
 // Maps an Item to its name.
 void* item_name(void* element, int i, void* x) {
     // TODO: d)
-    return "";
+    Item* item = (Item *) element;
+    return s_copy(item->name);
 }
-
-// Item* -> bool
 // Returns true if the price is less than *x.
 bool price_less_than(void* element, int i, void* x) {
     // TODO: c)
-    Item* item = (Item *)element;
-    int a = *(int *)x;
-    return item->price < a;
+    Item* item = (Item *)element; //Hier wird Item*, void* zugewiesen, das element in das Format von Item * gezwungen und zeitgleich mit der variable item gleichgestellt
+    int a = *(int *)x; // converting the type of x to int* and then into an int
+    return item->price < a; //returns the true or false based on whether the price is bigger or smaller than a
 }
 
 
@@ -120,9 +123,13 @@ int main(void) {
 
     printsln("= first item cheaper than 10€ =");
     // TODO: b)
-
- 
-
+    int price_tag = 1000;
+    Item* cheap_item = find_list(list, price_less_than, &price_tag);
+    if (cheap_item != NULL) {
+        String j = item_to_string(cheap_item);
+        printsln(j);
+        free(j);
+    }
     free_list(list, free_item);
 
     return 0;
