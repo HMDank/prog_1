@@ -45,6 +45,9 @@ Str new_str(int cap) {
 }
 
 // Appends t to str. Fails if the result would not fit into str.
+// a) Wenn die Kapazität nicht reicht, bricht das Programm mit einer Fehlermeldung ab.
+//    Der Ansatz ist sicher, weil man so keine Daten abschneiden oder ins falsche
+//    Speicher schreiben kann. Das ist die richtige Einschränkung vom Ansatz.
 void append_str(Str* str, Str t) {
     require_not_null(str);
     int n = str->len + t.len;
@@ -130,7 +133,19 @@ int split_words(/*in*/Str text, /*out*/Str* words, int words_length) {
     require_not_null(words);
     require("not negative", words_length >= 0);
     // TODO: b)
-    return 0;
+    char* s = text.s;
+    int count = 0;
+    while (true) {
+        s = skip_spaces(s);
+        if (eos(s)) return count;
+        char* word_start = s;
+        s = skip_word(s);
+        if (count < words_length) {
+            words[count] = make_str(word_start, s - word_start);
+            count++;
+        }
+        if (eos(s)) return count;
+    }
 }
 
 
@@ -145,6 +160,24 @@ void words_align_left(/*out*/Str* dst, /*in*/Str* words, int words_length, int w
     require("not negative", words_length >= 0);
     require("not negative", width >= 0);
     // TODO: c)
+    int line_len = 0;
+    for (int i = 0; i < words_length; i++) {
+        Str word = words[i];
+        if (i == 0) {
+            append_str(dst, word);
+            line_len = word.len;
+        } else {
+            if (line_len + 1 + word.len <= width) {
+                append_char(dst, ' ');
+                append_str(dst, word);
+                line_len += 1 + word.len;
+            } else {
+                append_char(dst, '\n');
+                append_str(dst, word);
+                line_len = word.len;
+            }
+        }
+    }
 }
 
 void print_bar(int width) {

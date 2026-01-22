@@ -134,3 +134,12 @@ int main(void) {
 
     return 0;
 }
+
+/*
+e) Vorteile von Pointerlisten:
+Mit Pointerlisten kann man verschiedene Datentypen in derselben Liste speichern,
+weil man void* Pointer verwendet. 
+Das ist praktisch, wenn man zum Beispiel eine Liste braucht, die gleichzeitig Pointer auf Zahlen und Pointer auf Zeichenketten enthält. 
+Man kann also eine generische Liste einmal implementieren und dann für beliebig viele verschiedene Datentypen nutzen, ohne Code zu duplizieren.
+Das spart Zeit und macht den Code wartbar.
+*/
